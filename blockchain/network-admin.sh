@@ -39,6 +39,23 @@ function printHelp () {
   echo "  sh network-admin.sh -m down"
 }
 
+function askProceed () {
+  read -p "Continue (y/n)? " ans
+  case "$ans" in
+    y|Y )
+      echo "proceeding..."
+    ;;
+    n|N )
+      echo "exiting..."
+      exit 1
+    ;;
+    * )
+      echo "invalid response"
+      askProceed
+    ;;
+  esac
+}
+
 # Parse commandline args
 while getopts "h?m:c:t:" opt; do
   case "$opt" in
@@ -62,3 +79,12 @@ else
 fi
 
 echo "${EXPMODE} with channel '${CHANNEL_NAME}' and CLI timeout of '${CLI_TIMEOUT}'"
+
+askProceed
+
+if [ "$MODE" == "generate" ]; then
+  echo "Generating certificates..."
+  # generateCerts
+  echo "Generating channel artifacts..."
+  # generateChannelArtifacts
+fi
