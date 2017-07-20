@@ -4,6 +4,22 @@ My attempt to create a blockchain network for trading ANDCoins.
 
 This is a learning exercise to familiarize myself with IBM Hyperledger Fabric.
 
+## How to Use
+
+Clone this repository
+
+```
+git clone
+```
+
+cd into the , create a new folder 'bin' and use this script to download the binaries (into the bin directory) and docker images
+
+```
+cd ANDcoin
+mkdir bin
+curl -sSL https://goo.gl/iX9dek | bash
+```
+
 ## User Stories
 
 ```
