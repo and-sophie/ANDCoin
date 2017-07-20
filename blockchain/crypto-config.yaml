@@ -1,0 +1,21 @@
+OrdererOrgs:
+  - Name: Orderer
+    Domain: andcoin.com
+    Specs:
+      - Hostname: orderer
+
+PeerOrgs:
+  - Name: ANDDigital1
+    Domain: anddigital1.andcoin.com
+    Template:
+      Count: 2
+    Users:
+      Count: 1
+  - Name: ANDDigital2
+    Domain: anddigital2.andcoin.com
+    Template:
+      Count: 2
+    Users:
+      Count: 1
+
+      

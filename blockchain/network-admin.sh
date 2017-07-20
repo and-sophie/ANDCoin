@@ -39,6 +39,7 @@ function printHelp () {
   echo "  sh network-admin.sh -m down"
 }
 
+# Ask user for confirmation of request
 function askProceed () {
   read -p "Continue (y/n)? " ans
   case "$ans" in
@@ -56,6 +57,29 @@ function askProceed () {
   esac
 }
 
+function generateCerts () {
+  which cryptogen
+  if [ "$?" -ne 0 ]; then
+    echo "cryptogen tool not found."
+    echo "Please make sure you have downloaded the binaries into the bin folder"
+    echo "Exiting..."
+    exit 1
+  fi
+  echo
+  echo "####################################################"
+  echo "#### Generate certificates using cryptogen tool ####"
+  echo "####################################################"
+
+  cryptogen generate --config=./crypto-config.yaml
+  if [ "$?" -ne 0 ]; then
+    echo "Failed to generate certificates...."
+    echo "Exiting..."
+    exit 1
+  fi
+  echo
+}
+
+
 # Parse commandline args
 while getopts "h?m:c:t:" opt; do
   case "$opt" in
@@ -71,6 +95,7 @@ while getopts "h?m:c:t:" opt; do
   esac
 done
 
+# Setting text to explain activity
 if [ "$MODE" == "generate" ]; then
   EXPMODE="Generating certs and genesis blocks for"
 else
@@ -78,13 +103,16 @@ else
   exit 1
 fi
 
+# Confirming action to user
 echo "${EXPMODE} with channel '${CHANNEL_NAME}' and CLI timeout of '${CLI_TIMEOUT}'"
 
+# Confirm that user wants to take this action
 askProceed
 
+# Completing steps to complete action
 if [ "$MODE" == "generate" ]; then
   echo "Generating certificates..."
-  # generateCerts
+  generateCerts
   echo "Generating channel artifacts..."
   # generateChannelArtifacts
 fi
