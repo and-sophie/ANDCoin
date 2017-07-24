@@ -1,2 +1,8 @@
 bin
-blockchain/crypto-config/
+
+blockchain/crypto-config
+
+blockchain/channel-artifacts/ANDDigital1MSPanchors.tx
+blockchain/channel-artifacts/ANDDigital2MSPanchors.tx
+blockchain/channel-artifacts/channel.tx
+blockchain/channel-artifacts/genesis.block

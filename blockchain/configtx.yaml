@@ -1,0 +1,65 @@
+Profiles:
+
+  OrdererGenesis:
+    Orderer:
+      <<: *OrdererDefaults
+      Organizations:
+        - *OrdererOrg
+    Consortiums:
+      SampleConsortium:
+        Organizations:
+          - *ANDDigital1
+          - *ANDDigital2
+
+  ANDCoinChannel:
+    Consortium: SampleConsortium
+    Application:
+      <<: *ApplicationDefaults
+      Organizations:
+        - *ANDDigital1
+        - *ANDDigital2
+
+Organizations:
+
+  - &OrdererOrg
+
+    Name: OrdererOrg
+    ID: OrdererMSP
+    MSPDir: crypto-config/ordererOrganizations/andcoin.com/msp
+
+  - &ANDDigital1
+
+    Name: ANDDigital1MSP
+    ID: ANDDigital1MSP
+    MSPDir: crypto-config/peerOrganizations/anddigital1.andcoin.com/msp
+    AnchorPeers:
+      - Host: peer0.anddigital1.andcoin.com
+        Port: 7051
+
+  - &ANDDigital2
+
+    Name: ANDDigital2MSP
+    ID: ANDDigital2MSP
+    MSPDir: crypto-config/peerOrganizations/anddigital2.andcoin.com/msp
+    AnchorPeers:
+      - Host: peer0.ANDDigital2.andcoin.com
+        Port: 7051
+
+Orderer: &OrdererDefaults
+
+  OrdererType: solo
+  Addresses:
+    - orderer.andcoin.com:7050
+  BatchTimeout: 2s
+  BatchSize:
+    MaxMessageCount: 10
+    AbsoluteMaxBytes: 99 MB
+    PreferredMaxBytes: 512 KB
+  Kafka:
+    Brokers:
+      - 127.0.0.1:9092
+  Organizations:
+
+Application: &ApplicationDefaults
+
+  Organizations:

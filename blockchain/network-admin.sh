@@ -3,6 +3,10 @@
 export PATH=${PWD}/../bin:${PWD}:$PATH
 # export FABRIC_CFG_PATH=${PWD}
 
+# Obtain the OS and Architecture string that will be used to select the correct
+# native binaries for your platform
+OS_ARCH=$(echo "$(uname -s|tr '[:upper:]' '[:lower:]'|sed 's/mingw64_nt.*/windows/')-$(uname -m | sed 's/x86_64/amd64/g')" | awk '{print tolower($0)}')
+
 # Default settings
 # The duration the CLI should wait for a response from
 # another container before giving up
@@ -79,6 +83,66 @@ function generateCerts () {
   echo
 }
 
+function generateChannelArtifacts () {
+  which configtxgen
+  if [ "$?" -ne 0 ]; then
+    echo "configtxgen tool not found."
+    echo "Please make sure you have downloaded the binaries into the bin folder"
+    echo "Exiting..."
+  fi
+
+  echo "####################################################"
+  echo "########## Generating Order Genesis block ##########"
+  echo "####################################################"
+
+  configtxgen -profile OrdererGenesis -outputBlock ./channel-artifacts/genesis.block
+
+  if [ "$?" -ne 0 ]; then
+    echo "Failed to generate orderer gensis block..."
+    exit 1
+  fi
+
+  echo
+  echo "###########################################################"
+  echo "# Generating channel configuration transaction channel.tx #"
+  echo "###########################################################"
+  echo
+
+  configtxgen -profile ANDCoinChannel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
+
+  if [ "$?" -ne 0 ]; then
+    echo "Failed to generate channel configuration transaction..."
+    exit 1
+  fi
+
+  echo
+  echo "#####################################################"
+  echo "##### Generating anchor peer update for ANDDigital1MSP #####"
+  echo "#####################################################"
+  echo
+
+  configtxgen -profile ANDCoinChannel -outputAnchorPeersUpdate ./channel-artifacts/ANDDigital1MSPanchors.tx -channelID $CHANNEL_NAME -asOrg ANDDigital1MSP
+
+  if [ "$?" -ne 0 ]; then
+    echo "Failed to generate anchor peer update for ANDDigital1..."
+    exit 1
+  fi
+
+  echo
+  echo "#####################################################"
+  echo "##### Generating anchor peer update for ANDDigital2MSP #####"
+  echo "#####################################################"
+  echo
+
+  configtxgen -profile ANDCoinChannel -outputAnchorPeersUpdate ./channel-artifacts/ANDDigital2MSPanchors.tx -channelID $CHANNEL_NAME -asOrg ANDDigital2MSP
+
+  if [ "$?" -ne 0 ]; then
+    echo "Failed to generate anchor peer update for ANDDigital2..."
+    exit 1
+  fi
+
+}
+
 
 # Parse commandline args
 while getopts "h?m:c:t:" opt; do
@@ -113,6 +177,7 @@ askProceed
 if [ "$MODE" == "generate" ]; then
   echo "Generating certificates..."
   generateCerts
+  generateChannelArtifacts
   echo "Generating channel artifacts..."
   # generateChannelArtifacts
 fi
