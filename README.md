@@ -12,7 +12,7 @@ Clone this repository
 git clone
 ```
 
-cd into the , create a new folder 'bin' and use this script to download the binaries (into the bin directory) and docker images
+cd into the directory, create a new folder 'bin' then use this script to download the binaries (into the bin directory) and docker images.
 
 ```
 cd ANDcoin
